@@ -18,9 +18,10 @@ public class OpenMovieClient {
 
     private final String URL = "http://www.omdbapi.com/?apikey=6320eeae&r=xml";
 
-    public void getFilmData(String title) throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
+    public Film getFilmData(String title) throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
         // TODO récuperer les autres données, notamment la date pour pouvoir croiser avec la date déjà presente ene locale
-        System.out.println(xPath(title, "/root/movie/@plot", XPathConstants.STRING));
+        String resume = xPath(title, "/root/movie/@plot", XPathConstants.STRING);
+        return new Film(null, null, null, null, null, null, null, resume);
     }
 
     public String xPath(String title, String requete, QName typeRetour) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {

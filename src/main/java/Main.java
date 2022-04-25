@@ -8,20 +8,27 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, SQLException {
 //        new Scrapper().retrieveTheNumbersData();
 //        launchMenu();
 //        getDbPediaData();
-//        new DbPediaClient().db();
-        new OpenMovieClient().getFilmData("tail");
+//        new DbPediaClient().getDbPediaData("Harry Potter");
+//        new OpenMovieClient().getFilmData("tail");
+        searchInfos("Avatar");
     }
 
 
-    private static void launchMenu() {
+    private static void launchMenu() throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
         Scanner scanner = new Scanner(System.in);
         int n = 1;
         while ( n != 99 ) {
@@ -34,7 +41,7 @@ public class Main {
             switch (n) {
 
                 case 1:
-                    searchInfos();
+                    searchInfos("Avatar");
                     break;
                 case 2:
                     searchMovies();
@@ -48,8 +55,13 @@ public class Main {
         System.out.println("FIN DU PROGRAMME !");
     }
 
-    private static void searchInfos() {
-        System.out.println("infos");
+
+
+    private static void searchInfos(String title) throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
+//        System.out.println(title);
+        List<Film> filmDb = DataBase.getFilmInfoFromDb(title);
+        Film filmOpenMovie = new OpenMovieClient().getFilmData(title);
+
     }
 
     private static void searchMovies(){

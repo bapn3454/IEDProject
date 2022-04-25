@@ -3,7 +3,25 @@ import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.ModelFactory;
 
+import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 public class DbPediaClient {
+
+    public void getDbPediaData(String title) {
+        String queryStr =  "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?f WHERE { ?f rdf:type dbo:Film; foaf:name \""+title+"\"@en. }";
+        Query query = QueryFactory.create(queryStr);
+
+        // Remote execution.
+        try ( QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query) ) {
+            // Set the DBpedia specific timeout.
+            ((QueryEngineHTTP)qexec).addParam("timeout", "10000") ;
+
+            // Execute.
+            ResultSet rs = qexec.execSelect();
+            ResultSetFormatter.out(System.out, rs, query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void db() {
 
