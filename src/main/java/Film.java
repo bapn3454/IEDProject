@@ -143,4 +143,19 @@ public class Film {
                 ", productors=" + productors +
                 '}';
     }
+
+    public String toStringRequest2() {
+        return "Film{" +
+                "titre='" + titre + '\'' +
+                ", releaseDate='" + releaseDate + '\'' +
+                ", distributor='" + distributor + '\'' +
+                ", genre='" + genre + '\'' +
+                ", budget='" + budget + '\'' +
+                ", usIncome='" + usIncome + '\'' +
+                ", worldIncome='" + worldIncome + '\'' +
+                ", resume='" + resume + '\'' +
+                ", realisators=" + realisators +
+                ", productors=" + productors +
+                '}';
+    }
 }

@@ -13,14 +13,14 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, SQLException {
 //        new Scrapper().retrieveTheNumbersData();
-//        launchMenu();
+        launchMenu();
 //        getDbPediaData();
 //        new DbPediaClient().getDbPediaData("Harry Potter");
 //        new OpenMovieClient().getFilmData("tail");
-        System.out.println(StringEscapeUtils.escapeHtml4("''test'Str''"));
-        System.out.println("Don't Breathe".replace("'","\\'"));
-        getMovieByTitle("Avatar");
-        getMoviesByActor("Stephen Lang");
+//        System.out.println(StringEscapeUtils.escapeHtml4("''test'Str''"));
+//        System.out.println("Don't Breathe".replace("'","\\'"));
+//        getMovieByTitle("Avatar");
+//        getMoviesByActor("Stephen Lang");
     }
 
 
@@ -28,19 +28,26 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int n = 1;
         while ( n != 99 ) {
+            String data;
             System.out.println("Indiquer votre choix");
             System.out.println("1 - Etant donné un titre de film, afficher toutes les informations disponibles sur le film");
             System.out.println("2 - Etant donné un nom d’acteur, afficher la liste des films où il a joué");
             System.out.println("99 - Quitter le programme");
             n = scanner.nextInt();
+            scanner.nextLine();
 
             switch (n) {
 
                 case 1:
-                    getMovieByTitle("Avatar");
+                    System.out.println("Merci d'entrer le titre d'un film");
+                    data = scanner.nextLine();
+                    getMovieByTitle(data);
                     break;
                 case 2:
-                    getMoviesByActor("Stephen Lang");
+                    System.out.println("Merci d'entrer le nom d'un acteur");
+                    data = scanner.nextLine();
+//                    getMoviesByActor("Stephen Lang");
+                    getMoviesByActor(data);
                     break;
                 case 3:
                     break;
@@ -55,7 +62,7 @@ public class Main {
 
     private static void getMovieByTitle(String title) throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
 
-        Film filmDb = DataBase.getFilmInfoFromDb(title);
+        Film filmDb = DataBase.getFilmInfoFromDb(title.replace("'","\\'"));
         Film filmOpenMovie = new OpenMovieClient().getFilmData(title);
         Film filmDbPedia = new DbPediaClient().getFilm(title);
 
@@ -91,10 +98,10 @@ public class Main {
             }
 
         }
-        Film filmDb = DataBase.getFilmInfoFromDb(actor);
 
+        for ( Film film : filmDbPediaUpdated ) {
+            System.out.println(film.toStringRequest2());
+        }
 
-        System.out.println("movies");
-        new DbPediaClient().getActor("Stephen Lang");
     }
 }

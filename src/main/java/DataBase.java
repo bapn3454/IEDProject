@@ -37,8 +37,6 @@ public class DataBase {
         List<Film> films = new ArrayList<>();
 
         while(res.next()) {
-            System.out.println(res.getString(1)+"  "+res.getString(2)
-                    +"  "+res.getString(3));
             Film film = new Film(res.getString(1),
                     res.getString(2),
                     res.getString(3),
