@@ -23,7 +23,7 @@ public class DbPediaClient {
                 + ""
                 + "\n"
                 + "select distinct ?directeur_name ?producteur_name ?acteur_name where {\n"
-                + "  ?film a dbo:data.Film;\n"
+                + "  ?film a dbo:Film;\n"
                 + "      foaf:name ?nom;\n"
                 + "     dbo:director ?d;\n"
                 + "        dbo:producer ?p;\n"
