@@ -1,6 +1,5 @@
 package data;
 
-import data.Film;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -33,7 +32,7 @@ public class OpenMovieClient {
         DocumentBuilder parseur = fabrique.newDocumentBuilder();
         Document document = parseur.parse(URL.concat( "&t=".concat( title ) ));
 
-            printDocument(document, new FileOutputStream(new File("moviesdb.xml")));
+//            printDocument(document, new FileOutputStream("moviesdb.xml"));
 
         //création de l'objet XPath
         XPathFactory xfabrique = XPathFactory.newInstance();

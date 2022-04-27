@@ -1,7 +1,4 @@
-import data.DataBase;
-import data.DbPediaClient;
-import data.Film;
-import data.OpenMovieClient;
+import data.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,7 +12,8 @@ import java.util.Scanner;
 public class Mediator {
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, SQLException {
-        launchMenu();
+//        launchMenu();
+        new Scrapper().retrieveTheNumbersData();
     }
 
     private static void launchMenu() throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
