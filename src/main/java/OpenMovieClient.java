@@ -21,7 +21,9 @@ public class OpenMovieClient {
     public Film getFilmData(String title) throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
         // TODO récuperer les autres données, notamment la date pour pouvoir croiser avec la date déjà presente ene locale
         String resume = xPath(title, "/root/movie/@plot", XPathConstants.STRING);
-        return new Film(null, null, null, null, null, null, null, resume);
+        String year = xPath(title, "/root/movie/@year", XPathConstants.STRING);
+        String retrievedTitle = xPath(title, "/root/movie/@title", XPathConstants.STRING);
+        return new Film(retrievedTitle, year, null, null, null, null, null, resume);
     }
 
     public String xPath(String title, String requete, QName typeRetour) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
@@ -29,11 +31,7 @@ public class OpenMovieClient {
         DocumentBuilder parseur = fabrique.newDocumentBuilder();
         Document document = parseur.parse(URL.concat( "&t=".concat( title ) ));
 
-//        try {
-//            printDocument(document, new FileOutputStream(new File("moviesdb.xml")));
-//        } catch (TransformerException e) {
-//            e.printStackTrace();
-//        }
+            printDocument(document, new FileOutputStream(new File("moviesdb.xml")));
 
         //création de l'objet XPath
         XPathFactory xfabrique = XPathFactory.newInstance();
@@ -44,7 +42,8 @@ public class OpenMovieClient {
         return (String) exp.evaluate(document, typeRetour);
     }
 
-    public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
+    public static void printDocument(Document doc, OutputStream out) throws IOException {
+        try {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
@@ -55,6 +54,9 @@ public class OpenMovieClient {
 
         transformer.transform(new DOMSource(doc),
                 new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
     }
 
 }

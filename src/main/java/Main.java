@@ -1,17 +1,10 @@
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.query.*;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.sparql.function.library.leviathan.log;
+import org.apache.commons.text.StringEscapeUtils;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -24,7 +17,10 @@ public class Main {
 //        getDbPediaData();
 //        new DbPediaClient().getDbPediaData("Harry Potter");
 //        new OpenMovieClient().getFilmData("tail");
-        searchInfos("Avatar");
+        System.out.println(StringEscapeUtils.escapeHtml4("''test'Str''"));
+        System.out.println("Don't Breathe".replace("'","\\'"));
+        getMovieByTitle("Avatar");
+        getMoviesByActor("Stephen Lang");
     }
 
 
@@ -41,10 +37,10 @@ public class Main {
             switch (n) {
 
                 case 1:
-                    searchInfos("Avatar");
+                    getMovieByTitle("Avatar");
                     break;
                 case 2:
-                    searchMovies();
+                    getMoviesByActor("Stephen Lang");
                     break;
                 case 3:
                     break;
@@ -57,14 +53,48 @@ public class Main {
 
 
 
-    private static void searchInfos(String title) throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
-//        System.out.println(title);
-        List<Film> filmDb = DataBase.getFilmInfoFromDb(title);
-        Film filmOpenMovie = new OpenMovieClient().getFilmData(title);
+    private static void getMovieByTitle(String title) throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
 
+        Film filmDb = DataBase.getFilmInfoFromDb(title);
+        Film filmOpenMovie = new OpenMovieClient().getFilmData(title);
+        Film filmDbPedia = new DbPediaClient().getFilm(title);
+
+        if ( filmDb != null ) {
+            if ( filmDb.getTitre().equals( filmOpenMovie.getTitre() )
+                    && filmDb.getReleaseDate().indexOf( filmOpenMovie.getReleaseDate() ) >= 0 ) {
+                filmDb.setResume( filmOpenMovie.getResume() );
+            }
+                filmDb.setRealisators( filmDbPedia.getRealisators() );
+                filmDb.setActors( filmDbPedia.getActors() );
+                filmDb.setProductors( filmDbPedia.getProductors() );
+
+            System.out.println(filmDb.toString());
+
+        } else {
+            System.out.println("Ce film est introuvable !");
+        }
     }
 
-    private static void searchMovies(){
+    private static void getMoviesByActor(String actor) throws SQLException {
+
+        List<Film> filmDbPedia = new DbPediaClient().getActor(actor);
+        List<Film> filmDbPediaUpdated = new ArrayList<>();
+        for ( Film film : filmDbPedia ) {
+            Film infos = new DbPediaClient().getFilm(film.getTitre());
+            Film filmDb = DataBase.getFilmInfoFromDb( film.getTitre().replace("'","\\'") );
+            if ( filmDb != null ) {
+                filmDb.setRealisators( infos.getRealisators() );
+                filmDb.setActors( infos.getActors() );
+                filmDb.setProductors( infos.getProductors() );
+
+                filmDbPediaUpdated.add(filmDb);
+            }
+
+        }
+        Film filmDb = DataBase.getFilmInfoFromDb(actor);
+
+
         System.out.println("movies");
+        new DbPediaClient().getActor("Stephen Lang");
     }
 }

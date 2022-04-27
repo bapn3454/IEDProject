@@ -1,131 +1,135 @@
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.ModelFactory;
 
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class DbPediaClient {
 
-    public void getDbPediaData(String title) {
-        String queryStr =  "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX dbo: <http://dbpedia.org/ontology/> SELECT ?f WHERE { ?f rdf:type dbo:Film; foaf:name \""+title+"\"@en. }";
-        Query query = QueryFactory.create(queryStr);
+    public Film getFilm(String title) {
 
-        // Remote execution.
-        try ( QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query) ) {
-            // Set the DBpedia specific timeout.
-            ((QueryEngineHTTP)qexec).addParam("timeout", "10000") ;
+        List<String> acteurs = new ArrayList<String>();
+        List<String> producers = new ArrayList<String>();
+        List<String> directors = new ArrayList<String>();
 
-            // Execute.
-            ResultSet rs = qexec.execSelect();
-            ResultSetFormatter.out(System.out, rs, query);
-        } catch (Exception e) {
-            e.printStackTrace();
+        ParameterizedSparqlString qs = new ParameterizedSparqlString(""
+                + "prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#>\n"
+                + "PREFIX dbo:     <http://dbpedia.org/ontology/>"
+                + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>"
+                + ""
+                + "\n"
+                + "select distinct ?directeur_name ?producteur_name ?acteur_name where {\n"
+                + "  ?film a dbo:Film;\n"
+                + "      foaf:name ?nom;\n"
+                + "     dbo:director ?d;\n"
+                + "        dbo:producer ?p;\n"
+                + "        dbo:starring ?a.\n"
+                + "  ?d foaf:name ?directeur_name.\n"
+                + "  ?p foaf:name ?producteur_name.\n"
+                + "  ?a foaf:name ?acteur_name.\n"
+                + "}");
+
+        Literal title1 = ResourceFactory.createLangLiteral(title, "en");
+        qs.setParam("nom", title1);
+
+        QueryExecution exec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", qs.asQuery());
+
+        ResultSet results = exec.execSelect();
+
+        while (results.hasNext()) {
+            QuerySolution s = results.nextSolution();
+
+            acteurs.add(s.get("acteur_name").toString().split("@")[0]);
+            producers.add(s.get("producteur_name").toString().split("@")[0]);
+            directors.add(s.get("directeur_name").toString().split("@")[0]);
+
         }
+        List<String> acteursDist = new ArrayList<String>(new HashSet<String>(acteurs));
+//        System.out.println("\n___________________");
+//        System.out.println("acteurs: \n");
+
+//        System.out.println(acteursDist);
+
+        List<String> prosucteursDist = new ArrayList<String>(new HashSet<String>(producers));
+//        System.out.println("\n___________________");
+//        System.out.println("producteur: \n");
+
+
+//        System.out.println(prosucteursDist);
+
+        List<String> dirDist = new ArrayList<String>(new HashSet<String>(directors));
+//        System.out.println("\n___________________");
+//        System.out.println("réalisateur: \n");
+
+//        System.out.println(dirDist);
+
+
+        return new Film(title, dirDist, acteursDist, prosucteursDist );
+
     }
 
-    public void db() {
+    public List<Film> getActor(String acteur) {
 
-//        String sparqlQueryString = "select distinct ?Concept where {[] a ?Concept } LIMIT 2";
-//
-        String sparqlQueryString = "PREFIX lm: <http://jena.hpl.hp.com/2004/08/location-mapping#>"
-                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-                + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>"
-                + "SELECT ?f WHERE {"
-                + "?f rdf:type"
-                + "foaf:name \"Ed Wood\"@en."
+        String header = "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n"
+                + "PREFIX dbo: <http://dbpedia.org/ontology/> \n";
+
+//        List<String> producers = new ArrayList<String>();
+//        List<String> directors = new ArrayList<String>();
+        List<String> films = new ArrayList<String>();
+
+        String queryString = header + "select distinct ?film_title ?directeur_name ?producteur_name where {\n"
+                + "  ?film a dbo:Film;\n"
+                + "   foaf:name ?film_title;\n"
+                + "   dbo:director ?d;\n"
+                + "   dbo:producer ?p;\n"
+                + "   dbo:starring ?a.\n"
+                + "  ?d foaf:name ?directeur_name.\n"
+                + "  ?p foaf:name ?producteur_name.\n"
+                + "  ?a foaf:name \""+ acteur +"\"@en.\n"
                 + "}";
 
+        Query query = QueryFactory.create(queryString);
+        QueryExecution qExe = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql/", query);
+        ResultSet results = qExe.execSelect();
 
-//        String sparqlQueryString = "PREFIX lm: <http://jena.hpl.hp.com/2004/08/location-mapping#>"
-//                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-//                + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>"
-//                +"SELECT ?f WHERE {\n" +
-//                "foaf:name \"Titanic\"@en.\n" +
-//                "}";
+        List<Film> filmList = new ArrayList<>();
 
-        Query query = QueryFactory.create(sparqlQueryString);
+        while (results.hasNext()) {
+            QuerySolution s = results.nextSolution();
 
-        QueryExecution qexec = QueryExecutionFactory.sparqlService("https://dbpedia.org/sparql", query);
-
-
-        try {
-            ResultSet results = qexec.execSelect();
-            for ( ; results.hasNext() ; )
-            {
-                QuerySolution soln = results.nextSolution() ;
-                String x = soln.get("Concept").toString();
-                System.out.print(x +"\n");
-            }
+            films.add(s.get("film_title").toString().split("@")[0]);
+//            producers.add(s.get("producteur_name").toString().split("@")[0]);
+//            directors.add(s.get("directeur_name").toString().split("@")[0]);
 
         }
-        finally { qexec.close() ; }
 
-    }
+        List<String> filmDist = new ArrayList<String>(new HashSet<String>(films));
 
+        for ( String title : filmDist ) {
+            filmList.add(new Film(title));
+        }
 
-    private void getDbPediaData() {
-//        String SOURCE = "http://www.opentox.org/api/1.1";
-//        String NS = SOURCE + "#";
-        String SOURCE = " http://dbpedia.org/";
-        String NS = SOURCE;
-//        Query q = QueryFactory.create("PREFIX lm: <http://jena.hpl.hp.com/2004/08/location-mapping#>"
-//                + "SELECT * WHERE {"
-//                + "[] lm:mapping ?e ."
-//                + "?e lm:name ?name ; lm:altName ?alt ."
-//                + "OPTIONAL { ?e lm:media ?media . } "
-//                + "}");
-        Query q = QueryFactory.create("PREFIX lm: <http://jena.hpl.hp.com/2004/08/location-mapping#>"
-                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-                + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>"
-                + "SELECT ?f WHERE {"
-                + "?f rdf:type"
-                + "foaf:name \"Ed Wood\"@en."
-                + "}");
-        OntModel model1 = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM_MICRO_RULE_INF);
-        model1.read( SOURCE, "RDF/XML" );
-        //prints out the RDF/XML structure
-//        qe.close();
-        System.out.println(" ");
-//        String q =
-//                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "+
-//                        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>  "+
-//                        "select ?uri "+
-//                        "where { "+
-//                        "?uri rdfs:subClassOf <http://www.opentox.org/api/1.1#Feature>  "+
-//                        "} \n ";
-        Query query = QueryFactory.create(q);
+//        List<String> prosucteursDist = new ArrayList<String>(new HashSet<String>(producers));
+//        System.out.println("\n___________________");
+//        System.out.println("\n producteurs:\n ");
+//        for(int i = 0; i < 10; i++) {
+//            System.out.println(prosucteursDist.get(i));
+//        }
+//        List<String> dirDist = new ArrayList<String>(new HashSet<String>(directors));
+//        System.out.println("\n___________________");
+//        System.out.println("\n réalisateurs: \n");
+//        for(int i = 0; i < 10; i++) {
+//            System.out.println(dirDist.get(i));
+//        }
 
-        System.out.println("----------------------");
-
-        System.out.println("Query Result Sheet");
-
-        System.out.println("----------------------");
-
-        System.out.println("Direct&Indirect Descendants (model1)");
-
-        System.out.println("-------------------");
-
-
-        // Execute the query and obtain results
-        QueryExecution qe = QueryExecutionFactory.create(query, model1);
-        ResultSet results =  qe.execSelect();
-
-        // Output query results
-        ResultSetFormatter.out(System.out, results, query);
-
-        qe.close();
-
-//        System.out.println("----------------------");
-//        System.out.println("Only Direct Descendants");
-//        System.out.println("----------------------");
-//
-//        // Execute the query and obtain results
-//        qe = QueryExecutionFactory.create(query, model2);
-//        results =  qe.execSelect();
-//
-//        // Output query results
-//        ResultSetFormatter.out(System.out, results, query);
-//        qe.close();
+        return filmList;
     }
 
 }
