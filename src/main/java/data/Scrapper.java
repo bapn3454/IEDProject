@@ -1,3 +1,5 @@
+package data;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,16 +49,7 @@ public class Scrapper {
             for ( int i = 2000; i < 2016; i++ ) {
                 String url = "http://www.the-numbers.com/market/".concat( i + "/genre/" + str);
                 Document doc = Jsoup.connect(url).get();
-//                Elements elements = doc.select("tr");
-//                for ( Element elt : elements ) {
-//                    if ( elements.indexOf(elt) < 2 || elements.indexOf(elt) > elements.size() - 3 )
-//                        continue;
-//                    Elements f = elt.select("td");
-//                    String title = f.get(1).text();
-//                    String distributor = f.get(3).text();
-//                    String[] film = new String[]{title, distributor, str};
-//                    data.add(film);
-//                }
+
                 Elements elements = doc.select("html body div#wrap div#main div#page_filling_chart table tbody tr");
                 Elements elementsTitle = doc.select("html body div#wrap div#main div#page_filling_chart table tbody tr b a");
                 for ( int k = 2; k < elements.size() - 3; k++ ) {
@@ -67,7 +60,6 @@ public class Scrapper {
                     data.add(film);
                 }
 
-//                    data.add(film);
             }
             this.createCsvFile(data, str);
         }

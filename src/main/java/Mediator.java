@@ -1,4 +1,7 @@
-import org.apache.commons.text.StringEscapeUtils;
+import data.DataBase;
+import data.DbPediaClient;
+import data.Film;
+import data.OpenMovieClient;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,20 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class Mediator {
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, SQLException {
-//        new Scrapper().retrieveTheNumbersData();
         launchMenu();
-//        getDbPediaData();
-//        new DbPediaClient().getDbPediaData("Harry Potter");
-//        new OpenMovieClient().getFilmData("tail");
-//        System.out.println(StringEscapeUtils.escapeHtml4("''test'Str''"));
-//        System.out.println("Don't Breathe".replace("'","\\'"));
-//        getMovieByTitle("Avatar");
-//        getMoviesByActor("Stephen Lang");
     }
-
 
     private static void launchMenu() throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
         Scanner scanner = new Scanner(System.in);
@@ -46,19 +40,18 @@ public class Main {
                 case 2:
                     System.out.println("Merci d'entrer le nom d'un acteur");
                     data = scanner.nextLine();
-//                    getMoviesByActor("Stephen Lang");
                     getMoviesByActor(data);
                     break;
-                case 3:
+                case 99:
+                    DataBase.closeConnection();
+                    System.out.println("FIN DU PROGRAMME !");
                     break;
                 default:
                     System.out.println("Merci de choisir une option entre 1 et 2 !");
             }
         }
-        System.out.println("FIN DU PROGRAMME !");
+
     }
-
-
 
     private static void getMovieByTitle(String title) throws SQLException, XPathExpressionException, ParserConfigurationException, IOException, SAXException {
 

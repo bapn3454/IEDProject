@@ -1,3 +1,6 @@
+package data;
+
+import data.Film;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -19,7 +22,6 @@ public class OpenMovieClient {
     private final String URL = "http://www.omdbapi.com/?apikey=6320eeae&r=xml";
 
     public Film getFilmData(String title) throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
-        // TODO récuperer les autres données, notamment la date pour pouvoir croiser avec la date déjà presente ene locale
         String resume = xPath(title, "/root/movie/@plot", XPathConstants.STRING);
         String year = xPath(title, "/root/movie/@year", XPathConstants.STRING);
         String retrievedTitle = xPath(title, "/root/movie/@title", XPathConstants.STRING);

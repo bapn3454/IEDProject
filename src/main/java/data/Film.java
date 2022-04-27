@@ -1,3 +1,5 @@
+package data;
+
 import java.util.List;
 
 public class Film {
@@ -129,33 +131,33 @@ public class Film {
 
     @Override
     public String toString() {
-        return "Film{" +
-                "titre='" + titre + '\'' +
-                ", releaseDate='" + releaseDate + '\'' +
-                ", distributor='" + distributor + '\'' +
-                ", genre='" + genre + '\'' +
-                ", budget='" + budget + '\'' +
-                ", usIncome='" + usIncome + '\'' +
-                ", worldIncome='" + worldIncome + '\'' +
-                ", resume='" + resume + '\'' +
-                ", realisators=" + realisators +
-                ", actors=" + actors +
-                ", productors=" + productors +
-                '}';
+        return "data.Film : \n" +
+                "Titre = " + titre + "\n" +
+                "Date de sortie = " + releaseDate + '\n' +
+                "Distributeur = " + distributor + '\n' +
+                "Genre = " + genre + '\n' +
+                "Budget = " + budget + '\n' +
+                "Revenus aux États-Unis = " + usIncome + '\n' +
+                "Revenus Mondiaux = " + worldIncome + '\n' +
+                "Résumé = " + resume + '\n' +
+                "Réalisateurs = " + realisators + '\n' +
+                "Acteurs = " + actors + '\n' +
+                "Producteurs = " + productors + '\n' +
+                "---------------------------------------------------------------------------------------";
     }
 
     public String toStringRequest2() {
-        return "Film{" +
-                "titre='" + titre + '\'' +
-                ", releaseDate='" + releaseDate + '\'' +
-                ", distributor='" + distributor + '\'' +
-                ", genre='" + genre + '\'' +
-                ", budget='" + budget + '\'' +
-                ", usIncome='" + usIncome + '\'' +
-                ", worldIncome='" + worldIncome + '\'' +
-                ", resume='" + resume + '\'' +
-                ", realisators=" + realisators +
-                ", productors=" + productors +
-                '}';
+        return "data.Film : \n" +
+                "Titre = " + titre + "\n" +
+                "Date de sortie = " + releaseDate + '\n' +
+                "Distributeur = " + distributor + '\n' +
+                "Genre = " + genre + '\n' +
+                "Budget = " + budget + '\n' +
+                "Revenus aux États-Unis = " + usIncome + '\n' +
+                "Revenus Mondiaux = " + worldIncome + '\n' +
+                "Résumé = " + resume + '\n' +
+                "Réalisateurs = " + realisators + '\n' +
+                "Producteurs = " + productors + '\n' +
+                "---------------------------------------------------------------------------------------";
     }
 }
